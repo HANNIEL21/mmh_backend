@@ -88,16 +88,14 @@ class Patient
         }
     }
 
-
-
     public function update($id, $data)
     {
         $query = "UPDATE " . $this->table . " SET 
         firstname = :firstname, 
         lastname = :lastname, 
-        status = :status, 
         age = :age, 
         ref = :ref, 
+        status = :status, 
         phone = :phone, 
         email = :email, 
         gender = :gender, 
@@ -117,9 +115,9 @@ class Patient
         $stmt->bindParam(':id', $id);
         $stmt->bindParam(':firstname', $data['firstname']);
         $stmt->bindParam(':lastname', $data['lastname']);
-        $stmt->bindParam(':status', $data['status']);
         $stmt->bindParam(':age', $data['age']);
         $stmt->bindParam(':ref', $data['ref']);
+        $stmt->bindParam(':status', $data['status']);
         $stmt->bindParam(':phone', $data['phone']);
         $stmt->bindParam(':email', $data['email']);
         $stmt->bindParam(':gender', $data['gender']);
@@ -139,7 +137,6 @@ class Patient
             return false;
         }
     }
-
 
     public function delete($id)
     {

@@ -19,6 +19,15 @@ class Appointment
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getAppointmentRef($id)
+    {
+        $query = "SELECT * FROM " . $this->table . " WHERE ref = :ref";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':ref', $id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getAppointments()
     {
         $query = "SELECT * FROM " . $this->table;
@@ -33,14 +42,13 @@ class Appointment
         return str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
     }
 
-
     public function create($data)
     {
         // Generate a unique 6-digit booking code
         $bookingCode = $this->generateCode();
 
-        $query = "INSERT INTO " . $this->table . " (firstname, lastname, email, phone, type, date, time, note, booking_number) 
-                  VALUES (:firstname, :lastname, :email, :phone, :type, :date, :time, :note, :code)";
+        $query = "INSERT INTO " . $this->table . " (firstname, lastname, email, phone, ref, type, date, time, note, code) 
+                  VALUES (:firstname, :lastname, :email, :phone, :ref, :type, :date, :time, :note, :code)";
 
         $stmt = $this->conn->prepare($query);
 
@@ -49,6 +57,7 @@ class Appointment
         $stmt->bindParam(':lastname', $data['lastname']);
         $stmt->bindParam(':email', $data['email']);
         $stmt->bindParam(':phone', $data['phone']);
+        $stmt->bindParam(':ref', $data['ref']);
         $stmt->bindParam(':type', $data['type']);
         $stmt->bindParam(':date', $data['date']);
         $stmt->bindParam(':time', $data['time']);
@@ -76,17 +85,16 @@ class Appointment
         }
     }
 
-
-
     public function update($id, $data)
     {
-        $query = "UPDATE " . $this->table . " SET firstname = :firstname, lastname = :lastname, email = :email, phone = :phone, type = :type, date = :date, time = :time, note = :note WHERE id = :id";
+        $query = "UPDATE " . $this->table . " SET firstname = :firstname, lastname = :lastname, email = :email, ref = :ref, phone = :phone, type = :type, date = :date, time = :time, note = :note WHERE id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":id", $id);
         $stmt->bindParam(":firstname", $data["firstname"]);
         $stmt->bindParam(":lastname", $data["lastname"]);
         $stmt->bindParam(":type", $data["type"]);
         $stmt->bindParam(":phone", $data["phone"]);
+        $stmt->bindParam(":ref", $data["ref"]);
         $stmt->bindParam(":email", $data["email"]);
         $stmt->bindParam(":date", $data["date"]);
         $stmt->bindParam(":time", $data["time"]);

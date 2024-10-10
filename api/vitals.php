@@ -20,7 +20,7 @@ switch ($method) {
             http_response_code(404);
             echo json_encode(array("status" => "error", "message" => "MISSING ID"));
         }
-        echo json_encode(["data" => $result]);
+        echo json_encode(["status" => "success","data" => $result]);
         break;
     case "POST":
         $data = json_decode(file_get_contents("php://input"), true);

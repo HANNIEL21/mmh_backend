@@ -17,6 +17,8 @@ switch ($method) {
     case "GET":
         if (isset($_GET['id'])) {
             $result = $controller->getAppointment($_GET['id']);
+        } elseif(isset($_GET['ref'])){
+            $result = $controller->getAppointmentRef($_GET['ref']);
         } else {
             $result = $controller->getAppointments();
         }
@@ -38,7 +40,7 @@ switch ($method) {
             $data = json_decode(file_get_contents("php://input"), true);
             $result = $controller->updateAppointment($_GET['id'], $data);
             if ($result) {
-                http_response_code(201);
+                http_response_code(200);
                 echo json_encode(array("status" => "success", "message" => "Appointment updated successfully"));
             } else {
                 http_response_code(400);

@@ -12,6 +12,9 @@ class AppointmentController{
     public function getAppointment($id){
         return $this->model->getAppointment($id);
     }
+    public function getAppointmentRef($id){
+        return $this->model->getAppointmentRef($id);
+    }
 
     public function getAppointments(){
         return $this->model->getAppointments();

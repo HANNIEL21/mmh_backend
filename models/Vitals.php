@@ -36,11 +36,27 @@ class Vitals{
         }
     }
 
-    public function update($id, $data){
-        $query = "UPDATE " . $this->table_name . " SET user_id = :uID, temperature = :temp, pulse = :pulse, weight = :weight, height = :height, respiration = :resp, bp = :bp, updated_at = :updated WHERE user_id = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id', $id);
-        $stmt->bindParam(':uID', $data['user_id']);
+    public function update($id, $data) {
+        $checkQuery = "SELECT COUNT(*) FROM " . $this->table_name . " WHERE user_id = :id";
+        $checkStmt = $this->conn->prepare($checkQuery);
+        $checkStmt->bindParam(':id', $id);
+        $checkStmt->execute();
+        $recordExists = $checkStmt->fetchColumn() > 0;
+    
+        if ($recordExists) {
+            $query = "UPDATE " . $this->table_name . " 
+                      SET user_id = :uID, temperature = :temp, pulse = :pulse, weight = :weight, height = :height, respiration = :resp, bp = :bp, updated_at = :updated 
+                      WHERE user_id = :id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id', $id);
+        } else {
+            $query = "INSERT INTO " . $this->table_name . " 
+                      (user_id, temperature, pulse, weight, height, respiration, bp, updated_at) 
+                      VALUES (:uID, :temp, :pulse, :weight, :height, :resp, :bp, :updated)";
+            $stmt = $this->conn->prepare($query);
+        }
+    
+        $stmt->bindParam(':uID', $id);
         $stmt->bindParam(':temp', $data['temperature']);
         $stmt->bindParam(':pulse', $data['pulse']);
         $stmt->bindParam(':weight', $data['weight']);
@@ -48,12 +64,14 @@ class Vitals{
         $stmt->bindParam(':resp', $data['respiration']);
         $stmt->bindParam(':bp', $data['bp']);
         $stmt->bindParam(':updated', $data['updated_at']);
-        if($stmt->execute()){
+    
+        if ($stmt->execute()) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
+    
 
     public function delete($id){
         $query = "DELETE FROM " . $this->table_name . " WHERE user_id = :id";
